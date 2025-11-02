@@ -1,1 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Missions</h2>
+<label for="sortYear">Sort by year:</label>
+<select id="sortyear">
+	<option value="asc"> Ascending</option>
+	<option value="desc"> Descending</option>
+</select>>
 
+<ul id="missionList">
+	{% for mission in missions %}
+	<li data-year="{{ mission.year }}">
+		{{ mission.astronaut }} - {{ mission.name }} ({{ mission.year }}) as {{ mission.role }}
+	</li>
+	{% endfor %}
+</ul>
+
+<script>
+const sortSelect = document.getElementById("sortYear");
+const list = document.getElementById("missionlist");
+
+sortSelect.addEventListener("change", function() {
+	let items = Array.from(list.getElementsByTagName("li"));
+	items.sort((a, b) => {
+		let yearA = parseInt(a.getAttribute("data-year"));
+		let yearB = parseInt(b.getAttribute("data-year"));
+		return sortSelect.value === "asc" ? yearA - yearB : yearB - yearA;
+	});
+	items.forEach(li => list.appendChild(li));
+});
+</script>
+{% endblock %}

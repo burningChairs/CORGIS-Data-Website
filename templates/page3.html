@@ -1,1 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Astronaut Lifetime Stats</h2>
+<canvas id="statsChart" width="600" height="400"></canvas>
 
+<script>
+const ctx = document.getElementById('statsChart').getContext('2d');
+const astronauts = {{ stats | tojson }};
+const names = astronauts.map(a => a.astronaut);
+const misionCounts = astronauts.map(a => a.missions);
+const durations = astronauts.map(a => a.duration);
+
+new Chart(ctx, {
+	type: 'bar',
+	data: {
+		labels: names,
+		datasets: [
+			{ label: 'Missions', data: missionCounts, backgroundColor: 'rgba(54, 162, 235. 0.6)' },
+			{ label: 'Duration (days)', sata: duration, backgroundColor: 'rgba(255, 99, 132, 0.6)' }
+		]
+	},
+	options: {
+		responsive: true,
+		scales: { y: { beginAtZero: true } }
+	}
+});
+</script>
+{% endblock %}

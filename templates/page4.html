@@ -1,1 +1,9 @@
-
+{% extends "layout.html" %}
+{% block content %}
+<h2>Military Astronauts</h2>
+<ul>
+	{% for astronaut in military %}
+	<li>{{ astronaut.Profile.Name }} ({{ astronaut.Profile.Nationality }})</li>
+	{% endfor %}
+</ul>
+{% endblock %}

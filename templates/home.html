@@ -1,5 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Hello! This is my Astronaut Data Web App!</h2>
-<p>Explore astronauts, their missions, statistics, and nationalities. Used the menu above to navigate.</p>
+<section class="hero">
+	<h2>Hello! This is my Astronaut Data Web App!</h2>
+	<p class="lead">Explore historical astronaut data, missions, statistics, and nationalities. Used the menu above to navigate.</p>
+	
+	<div class="cards">
+	    <div class-"card">
+	        <h3>{{ total_astronauts }}</h3>
+	        <p>Total Astronauts (records)</p>
+	    </div>
+	    <div class-"card">
+	        <h3>{{ total_missions }}</h3>
+	        <p>Total Missions (from data)</p>
+	    </div>
+	    <div class-"card">
+	        <h3>{{ avg_missions }}</h3>
+	        <p>Average missions per astronaut</p>
+	    </div>
+	</div>
+</section>
+
+<section class="mini-stats">
+    <h3>Top Nationalities</h3>
+    <div>
+        {% for nat, c in nationality_count.items()|sort(attribute='1', reverse=true) %}
+            <div class="nat-item"><strong>{{ nat }}</strong><span>{{ c }}</span></div>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

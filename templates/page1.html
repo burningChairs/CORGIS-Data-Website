@@ -1,26 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Astronauts</h2>
-<input type="text" id="searchInput" placeholder="Search by name or nationality">
+<h2>Astronaut Profiles</h2>
 
-<ul id="astronautList">
-	{% for astronaut in astronauts %}
-	<li data-name"{{ astronaut.Profile.Name }}" data-nat+"{{ astronaut.Profile.Nationality }}">
-		{{ astronaut.Profile.Name }} ({{ astronaut.Profile.Nationality }}) - born: m{{ astronaut.Profile["Birth Year"] }}
-	</li>
-	{% endfor %}
-</ul>
-
-<script>
-const input = document.getElementById("searchInput");
-input.addEventListemer("keyup", function() {
-	const filter = input.value.toLowerCase();
-	const list = document.getElementById("astronautList").getElementsByTagName("li");
-	for (let li of list) {
-		const name = li.getAttribute("data-name").toLowerCase();
-		const nat = li.getAttribute("data-nat").toLowerCase();
-		li.style.display = (name.includes(filter) || nat.includes(filter)) ? "" : "none";
-	}
-});
-</script>
+<div class="controls">
+    <input id="search" placeholder="Search by name, nationality, selection year...." />
+    <select id="sortSelect">
+        <option value="name_asc">Name ↑</option>
+        <option value=""></option>
+        <option value=""></option>
+    </select>
+</div>
 {% endblock %}

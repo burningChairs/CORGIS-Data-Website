@@ -6,8 +6,91 @@
     <input id="search" placeholder="Search by name, nationality, selection year...." />
     <select id="sortSelect">
         <option value="name_asc">Name ↑</option>
-        <option value=""></option>
-        <option value=""></option>
+        <option value="name_desc">Name ↓</option>
+        <option value="birth_asc">Birth year ↑</option>
+        <option value="birth_desc">Birth year ↓</option>
     </select>
 </div>
+
+<div id="cards" class="cards-grid">
+    {% for astronaut in astronauts %}
+    {% set p = astronaut.Profile %}
+    <article class="astronaut-card" data-name="{{ p.Name|default('') }}" data-nat=" {{ p.Nationality|default('') }}" data-birth="{{ p['Birth Year']|default(0) }}">
+        <header class="card-head">
+            <h3>{{ p.Name }}</h3>
+            <div class="meta">{{ p.Nationality}} • Born: {{ p['Birth Year'] }}</div>
+        </header>
+        
+        <div class="card-body hidden">
+            <p><strong>Gender:</strong> {{ p.Gender }}</p>
+            <p><strong>Selection:</strong> {{ (p.Selection or {}).Group if p.Selection else p['Selection.Group']|default('') }} - {{ (p.Selection or {}).Year if p.Selection else p['Selection.Year']|default('') }}</p>
+            <p><strong>Military:</strong> {{ 'Yes' if p.Military else 'No' }}</p>
+            <p><strong>Lifetime missions:</strong> {{ (p['Lifetime Statistics'] or {}).get('Mission count', (p.get('Lifetime Statistics) or {}).get('Mission count', 0)) }}</p>
+            
+            {% if astronaut.Mission %}
+            <details>
+                <summary>Missions ({{ astronaut.Mission|length }})</summary>
+                <ul>
+                    {% for m in astronaut.Mission %}
+                    <li>
+                        <strong>{{ m.Name }}</strong> ({{ m.Year }}) - role: {{ m.Role }} - duration: {{ (m.Durations or {}).get('Mission duration', m.get('Mission duration', 0)) }} days
+                    </li>
+                    {% endfor %}
+                </ul>
+            </details>
+            {% endif %}
+        </div>
+        
+        <footer class="card-actions">
+            <button class="toggle">Details</button>
+        </footer>
+    </article>
+    {% endfor %}
+</div>
+
+<script>
+const search = document.getElementById('search');
+const sortSelect = document.getElementById('sortSelect');
+const cards = Array.from(document.querySelectorAll('.astronaut-card'));
+
+function renderFilterSort() {
+    const q = search.value.toLowerCase();
+    const sort = sortSelect.value;
+    
+    // Filter
+    cards.forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        const nat = (card.dataset.nat || '').toLowerCase();
+        const birth = parseInt(card.dataset.birth || 0);
+        const show = name.includes(q) || nat.includes(q) || String(birth).includes(q);
+        card.style.display = show ? '' : 'none';
+        });
+    
+    // Sort re append
+    const container = document.getElementById('cards');
+    let visible = cards.slice().filter(c => c.style.display !== 'none');
+    
+    visible.sort((a,b) => {
+        if (sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
+        if (sort === 'name_desc') return b.dataset.name.localeCompare(a.dataset.name);
+        if (sort === 'birth_asc') return parseInt(a.dataset.birth || 0) - parseInt(b.dataset.birth || 0);
+        if (sort === 'birth_desc') return parseInt(b.dataset.birth || 0) - parseInt(a.dataset.birth || 0);
+        return 0;
+    });
+    
+    visible.forEach(n => container.appendChild(n));
+}
+
+// toggle details
+document.querySelectorAll('.astronaut-card .toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const card = e.target.closest('.astronaut-card');
+        const body = card.querySelector('.card-body');
+        body.classList.toggle('hidden');
+    });
+});
+
+search.addEvenListener('input', renderFilterSort);
+sortSelect.addEventListener('change', renderFilterSort);
+</script>
 {% endblock %}

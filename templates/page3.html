@@ -1,28 +1,40 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Astronaut Lifetime Stats</h2>
-<canvas id="statsChart" width="600" height="400"></canvas>
+<h2>Lifetime Statistics</h2>
+
+<div>
+    <label>Show top: <select id="topN"><option>10</option><option>15</option><option>20</option></select></label>
+</div>
+
+<canvas id="statsChart"></canvas>
 
 <script>
-const ctx = document.getElementById('statsChart').getContext('2d');
-const astronauts = {{ stats | tojson }};
-const names = astronauts.map(a => a.astronaut);
-const misionCounts = astronauts.map(a => a.missions);
-const durations = astronauts.map(a => a.duration);
-
-new Chart(ctx, {
-	type: 'bar',
-	data: {
-		labels: names,
-		datasets: [
-			{ label: 'Missions', data: missionCounts, backgroundColor: 'rgba(54, 162, 235. 0.6)' },
-			{ label: 'Duration (days)', sata: duration, backgroundColor: 'rgba(255, 99, 132, 0.6)' }
-		]
-	},
-	options: {
-		responsive: true,
-		scales: { y: { beginAtZero: true } }
-	}
-});
+const raw = {{ stats | tojson }};
+function renderChart(n=10) {
+    // sort by missions desc and slice top n
+    const sorted = raw.slice().sort((a,b) => b.missions - a.missions).slice(0,n);
+    const labels = sorted.map(s => s.astronaut);
+    const missions = sorted.map(s => s.missions);
+    const durations = sorted.map(s => s.duration);
+        
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    if (window.statsChart) window.statsChart.destroy();
+    window.statsChart = new Chart(ctx {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Missions', data: missions, backgroundColor: '#64003f' },
+                { label: 'Lifetime duration (days)', data: durations, backgroundColor: '#6b2f51' }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+}
+document.getElementById('topN').addEventListener('change', () => renderChart(parseInt(document.getElementById('topN').value)));
+renderChart(10);
 </script>
 {% endblock %}

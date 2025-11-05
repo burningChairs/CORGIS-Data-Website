@@ -1,22 +1,29 @@
 {% extends "layout.html" %}
 {% block content%}
-<h2>Astronauts by Nationality</h2>
-<canvas id="natChart" width="600" height="400"></canvas>
+<h2>Nationality Breakdown</h2>
+
+<div class="two-col">
+    <div>
+        <canvas id="natChart"></canvas>
+    </div>
+    <aside>
+        <h4>Counts</h4>
+        <ul class="simple-list">
+            {% for nat, c in nationality_count.items()|sort(attribute='1', reverse=true) %}
+            <li><strong>{{ nat }}</strong> - {{ c }}</li>
+            {% endfor %}
+        </ul>
+    </aside>
+</div>
 
 <script>
 const natData = {{ nationality_count | tojson }};
-const labels = Object.keys(natData);
-const counts = Object.values(natdata);
-
-new Chart(document.getElementById('natChart').getContext('2d'), {
-	type: 'pie',
-	data: {
-		labels: labels,
-		datasets: [{
-			data: counts,
-			backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
-		}]
-	}
+const labels = Object.keys(natSata);
+const counts = Object.values(natData);
+new Chart(document.getElementById('natChart'), {
+    type: 'pie',
+    data: { labels, datasets: [{ data: counts, backgroundColor: ['#5d0341','64003f','#6b2f51','#b9a890','#e1d9b7'] }] },
+    options: { responsive: true }
 });
 </script>
 {% endblock %}

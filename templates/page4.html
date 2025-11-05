@@ -7,7 +7,7 @@
 
 <ul id="milList class="simple-list>
     {% for a in military %}
-    {% set p = a.Profile%}
+    {% set p = a.Profile %}
     <li><strong>{{ p.Name }}</strong> - {{ p.Nationality }} • Selection: {{ (p.Selection or {}).get('Year', p['Selection.Year']|default('')) }}</li>
     {% endfor %}
 </ul>

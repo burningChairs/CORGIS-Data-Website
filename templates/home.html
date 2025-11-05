@@ -9,11 +9,11 @@
 	        <h3>{{ total_astronauts }}</h3>
 	        <p>Total Astronauts (records)</p>
 	    </div>
-	    <div class-"card">
+	    <div class="card">
 	        <h3>{{ total_missions }}</h3>
 	        <p>Total Missions (from data)</p>
 	    </div>
-	    <div class-"card">
+	    <div class="card">
 	        <h3>{{ avg_missions }}</h3>
 	        <p>Average missions per astronaut</p>
 	    </div>
@@ -23,7 +23,7 @@
 <section class="mini-stats">
     <h3>Top Nationalities</h3>
     <div>
-        {% for nat, c in nationality_count.items()|sort(attribute='1', reverse=true) %}
+        {% for nat, c in nationality_count|dictsort(by='value', reverse=True) %}
             <div class="nat-item"><strong>{{ nat }}</strong><span>{{ c }}</span></div>
         {% endfor %}
     </div>

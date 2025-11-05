@@ -1,6 +1,6 @@
 :root{
     --plum-1: #5d0341;
-    --plus-2: #64003f;
+    --plum-2: #64003f;
     --plum-3: #6b2f51;
     --tan-1: #b9a890;
     --cream: #e1d9b7;
@@ -34,7 +34,7 @@ body{
 .main-nav a:hover{text-decoration:underline;opacity:1}
 
 .content{padding:28px 0}
-.hero{backgrond:linear-gradient(180deg, rgba(101,20,50,0,0.6), rgba(101,20,50,0.02));padding:22px;border-left:4px solid var(--plum-2);border-radius:6px;margin-bottom:20px}
+.hero{background:linear-gradient(180deg, rgba(101,20,50,0.6), rgba(101,20,50,0.02));padding:22px;border-left:4px solid var(--plum-2);border-radius:6px;margin-bottom:20px}
 .hero h2{margin:0 0 6px;color:var(--plum-1)}
 .lead{margin:0 0 12px;color:var(--muted)}
 
@@ -45,7 +45,7 @@ body{
 
 .mini-stats{margin-top:18px}
 .nat-list{display:flex;gap:10px;flex-wrap:wrap}
-.nat-item{background:rgba(101,20,500.04);padding:8px 12px;border-radius:8px;color:var(--plum-3);font-weight:600}
+.nat-item{background:rgba(101,20,50,0.4);padding:8px 12px;border-radius:8px;color:var(--plum-3);font-weight:600}
 
 .controls{display:flex;gap:10px;align-items:center;margin:12px 0}
 .controls input[type="text"],

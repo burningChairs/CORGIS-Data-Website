@@ -7,13 +7,13 @@
         <select id="astronautFilter">
             <option value="">All</option>
             {% for n in astronauts_names %}
-                <option value="{{ n }}">{{ n }}</option>
+            <option value="{{ n }}">{{ n }}</option>
             {% endfor %}
         </select>
     </label>
     
     <label>
-        <select>
+        <select id="sortBy">
             <option value="year_desc">Year ↓</option>
             <option value="year_asc">Year ↑</option>
             <option value="name_asc">Mission ↑</option>
@@ -27,7 +27,7 @@
     </thead>
     <tbody id="missionTbody">
         {% for m in missions %}
-        <tr data-astronaut="{{ m.asronaut }}" data-year="{{ m.year }}" data-name="{{ m.name }}">
+        <tr data-astronaut="{{ m.astronaut }}" data-year="{{ m.year }}" data-name="{{ m.name }}">
             <td>{{ m.astronaut }}</td>
             <td>{{ m.name }}</td>
             <td>{{ m.year }}</td>
@@ -53,9 +53,9 @@ function applyMissionControls() {
     
     // Sort
     rows.sort((a,b) => {
-        if (sort === 'year_desc') return parseInt(b.dataset.year || 0) - parseInt(a.dataset.year || 0);
-        if (sort === 'year_asc') return parseInt(a.dataset.year || 0) - parseInt(b.dataset.year || 0);
-        if (sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
+        if(sort === 'year_desc') return parseInt(b.dataset.year) - parseInt(a.dataset.year);
+        if(sort === 'year_asc') return parseInt(a.dataset.year) - parseInt(b.dataset.year);
+        if(sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
         return 0;
     });
     

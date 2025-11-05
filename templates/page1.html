@@ -3,7 +3,7 @@
 <h2>Astronaut Profiles</h2>
 
 <div class="controls">
-    <input id="search" placeholder="Search by name, nationality, selection year...." />
+    <input id="search" placeholder="Search by name, nationality, selection year..." />
     <select id="sortSelect">
         <option value="name_asc">Name ↑</option>
         <option value="name_desc">Name ↓</option>
@@ -15,10 +15,10 @@
 <div id="cards" class="cards-grid">
     {% for astronaut in astronauts %}
     {% set p = astronaut.Profile %}
-    <article class="astronaut-card" data-name="{{ p.Name|default('') }}" data-nat=" {{ p.Nationality|default('') }}" data-birth="{{ p['Birth Year']|default(0) }}">
+    <article class="astronaut-card" data-name="{{ p.Name|default('') }}" data-nat="{{ p.Nationality|default('') }}" data-birth="{{ p['Birth Year']|default(0) }}">
         <header class="card-head">
             <h3>{{ p.Name }}</h3>
-            <div class="meta">{{ p.Nationality}} • Born: {{ p['Birth Year'] }}</div>
+            <div class="meta">{{ p.Nationality }} • Born: {{ p['Birth Year'] }}</div>
         </header>
         
         <div class="card-body hidden">
@@ -90,7 +90,7 @@ document.querySelectorAll('.astronaut-card .toggle').forEach(btn => {
     });
 });
 
-search.addEvenListener('input', renderFilterSort);
+search.addEventListener('input', renderFilterSort);
 sortSelect.addEventListener('change', renderFilterSort);
 </script>
 {% endblock %}

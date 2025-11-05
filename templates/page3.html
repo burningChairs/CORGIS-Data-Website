@@ -3,7 +3,13 @@
 <h2>Lifetime Statistics</h2>
 
 <div>
-    <label>Show top: <select id="topN"><option>10</option><option>15</option><option>20</option></select></label>
+    <label>Show top: 
+        <select id="topN">
+            <option>10</option>
+            <option>15</option>
+            <option>20</option>
+        </select>
+    </label>
 </div>
 
 <canvas id="statsChart"></canvas>
@@ -19,7 +25,7 @@ function renderChart(n=10) {
         
     const ctx = document.getElementById('statsChart').getContext('2d');
     if (window.statsChart) window.statsChart.destroy();
-    window.statsChart = new Chart(ctx {
+    window.statsChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels,
@@ -34,7 +40,8 @@ function renderChart(n=10) {
         }
     });
 }
-document.getElementById('topN').addEventListener('change', () => renderChart(parseInt(document.getElementById('topN').value)));
+document.getElementById('topN').addEventListener('change', () => {
+    renderChart(parseInt(document.getElementById('topN').value));
+});
 renderChart(10);
-</script>
 {% endblock %}

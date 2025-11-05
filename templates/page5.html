@@ -9,7 +9,7 @@
     <aside>
         <h4>Counts</h4>
         <ul class="simple-list">
-            {% for nat, c in nationality_count.items()|sort(attribute='1', reverse=true) %}
+            {% for nat, c in nationality_count.items()|dictsort(by='value', reverse=true) %}
             <li><strong>{{ nat }}</strong> - {{ c }}</li>
             {% endfor %}
         </ul>
@@ -22,7 +22,13 @@ const labels = Object.keys(natSata);
 const counts = Object.values(natData);
 new Chart(document.getElementById('natChart'), {
     type: 'pie',
-    data: { labels, datasets: [{ data: counts, backgroundColor: ['#5d0341','64003f','#6b2f51','#b9a890','#e1d9b7'] }] },
+    data: {
+        labels,
+        datasets: [{
+            data: counts,
+            backgroundColor: ['#5d0341', '#64003f', '#6b2f51', '#b9a890', '#e1d9b7']
+        }]
+    },
     options: { responsive: true }
 });
 </script>

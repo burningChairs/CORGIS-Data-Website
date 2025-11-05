@@ -48,9 +48,7 @@ def nationality_counts(data):
 @app.route("/")
 def home():
     total_astronauts = len(data)
-    total_missions = sum(
-        len(a.get("Mission", []) or []) for a in data
-    )
+    total_missions = sum(len(a.get("Mission", []) or []) for a in data)
     stats = get_lifetime_stats(data)
     avg_missions = round(sum(s["missions"] for s in stats) / (len(stats) or 1), 2)
     return render_template(
@@ -89,4 +87,4 @@ def page5():
     return render_template("page5.html", nationality_count=counts)
 
 if __name__ == "__main__":
-    app.run(degub=True)
+    app.run(debug=True)

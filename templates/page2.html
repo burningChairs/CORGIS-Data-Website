@@ -1,32 +1,70 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Missions</h2>
-<label for="sortYear">Sort by year:</label>
-<select id="sortyear">
-	<option value="asc"> Ascending</option>
-	<option value="desc"> Descending</option>
-</select>>
 
-<ul id="missionList">
-	{% for mission in missions %}
-	<li data-year="{{ mission.year }}">
-		{{ mission.astronaut }} - {{ mission.name }} ({{ mission.year }}) as {{ mission.role }}
-	</li>
-	{% endfor %}
-</ul>
+<div class="controls">
+    <label>Filter by astronaut:
+        <select id="astronautFilter">
+            <option value="">All</option>
+            {% for n in astronauts_names %}
+                <option value="{{ n }}">{{ n }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    
+    <label>
+        <select>
+            <option value="year_desc">Year ↓</option>
+            <option value="year_asc">Year ↑</option>
+            <option value="name_asc">Mission ↑</option>
+        </select>
+    </label>
+</div>
+
+<table class="table">
+    <thead>
+        <tr><th>Astronaut</th><th>Mission</th><th>Year</th><th>Role</th><th>Duration (days)</th></tr>
+    </thead>
+    <tbody id="missionTbody">
+        {% for m in missions %}
+        <tr data-astronaut="{{ m.asronaut }}" data-year="{{ m.year }}" data-name="{{ m.name }}">
+            <td>{{ m.astronaut }}</td>
+            <td>{{ m.name }}</td>
+            <td>{{ m.year }}</td>
+            <td>{{ m.role }}</td>
+            <td>{{ m.duration|default(0) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 <script>
-const sortSelect = document.getElementById("sortYear");
-const list = document.getElementById("missionlist");
+const filterSelect = document.getElementById('astronautFilter');
+const sortSelect = document.getElementById('sortBy');
+const tbody = document.getElementById('missionTbody');
 
-sortSelect.addEventListener("change", function() {
-	let items = Array.from(list.getElementsByTagName("li"));
-	items.sort((a, b) => {
-		let yearA = parseInt(a.getAttribute("data-year"));
-		let yearB = parseInt(b.getAttribute("data-year"));
-		return sortSelect.value === "asc" ? yearA - yearB : yearB - yearA;
-	});
-	items.forEach(li => list.appendChild(li));
-});
+function applyMissionControls() {
+    const astronaut = filterSelect.value;
+    const sort = sortSelect.value;
+    let rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Filter
+    rows = rows.filter(r => !astronaut || r.dataset.astronaut === astronaut);
+    
+    // Sort
+    rows.sort((a,b) => {
+        if (sort === 'year_desc') return parseInt(b.dataset.year || 0) - parseInt(a.dataset.year || 0);
+        if (sort === 'year_asc') return parseInt(a.dataset.year || 0) - parseInt(b.dataset.year || 0);
+        if (sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
+        return 0;
+    });
+    
+    // Clear and append
+    tbody.innerHTML = '';
+    rows.forEach(r => tbody.appendChild(r));
+}
+
+filterSelect.addEventListener('change', applyMissionControls);
+sortSelect.addEventListener('change', applyMissionControls);
 </script>
 {% endblock %}

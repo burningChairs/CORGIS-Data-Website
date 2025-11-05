@@ -23,7 +23,7 @@
 <section class="mini-stats">
     <h3>Top Nationalities</h3>
     <div>
-        {% for nat, c in nationality_count|dictsort(by='value', reverse=True) %}
+        {% for nat, c in nationality_count|dictsort(by='value', reverse=true) %}
             <div class="nat-item"><strong>{{ nat }}</strong><span>{{ c }}</span></div>
         {% endfor %}
     </div>

@@ -1,28 +1,35 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 import json
 import os
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__)
 
-#Load JSON data
 DATA_FILE = os.path.join(os.path.dirname(__file__), "astronauts.json")
+
 with open(DATA_FILE, "r", encoding="utf-8") as f:
     data = json.load(f)
 
-#helper: missions list and normal keys
+
 def get_missions(data):
     missions = []
     for astronaut in data:
         profile = astronaut.get("Profile", {})
         name = profile.get("Name", "Unknown")
-        for m in astronaut.get("Mission", []) or []:
+        raw_missions = astronaut.get("Mission", [])
+        if not isinstance(raw_missions, list):
+            raw_missions = []
+
+        for m in raw_missions:
+            if not isinstance(m, dict):
+                continue  # Skip malformed mission entries
             durations = m.get("Durations")
             if not isinstance(durations, dict):
                 durations = {}
+
             missions.append({
                 "astronaut": name,
                 "role": m.get("Role", ""),
-                "year": m.get("Year") or m.get("Mission.Year") or 0,
+                "year": m.get("Year") if isinstance(m.get("Year"), int) else 0,
                 "duration": durations.get("Mission duration", 0.0),
                 "eva": durations.get("EVA duration", 0.0),
                 "vehicles": m.get("Vehicles", {})
@@ -32,12 +39,13 @@ def get_missions(data):
 def get_lifetime_stats(data):
     stats = []
     for astronaut in data:
-        p = astronaut.get("Profile", {})
-        lifetime_starts = p.get("Lifetime Statistics")
+        profile = astronaut.get("Profile", {})
+        lifetime_stats = profile.get("Lifetime Statistics")
         if not isinstance(lifetime_stats, dict):
             lifetime_stats = {}
+
         stats.append({
-            "astronaut": p.get("Name", "Unknown"),
+            "astronaut": profile.get("Name", "Unknown"),
             "missions": lifetime_stats.get("Mission count", 0),
             "duration": lifetime_stats.get("Mission duration", 0.0),
             "eva": lifetime_stats.get("EVA duration", 0.0),
@@ -57,13 +65,12 @@ def home():
     total_missions = sum(len(a.get("Mission", []) or []) for a in data)
     stats = get_lifetime_stats(data)
     avg_missions = round(sum(s["missions"] for s in stats) / (len(stats) or 1), 2)
-    return render_template(
-        "home.html",
-        total_astronauts=total_astronauts,
-        total_missions=total_missions,
-        avg_missions=avg_missions,
-        nationality_count=nationality_counts(data)
-    )
+    nationality_count = nationality_counts(data)
+    return render_template("home.html",
+                           total_astronauts=total_astronauts,
+                           total_missions=total_missions,
+                           avg_missions=avg_missions,
+                           nationality_count=nationality_count)
 
 @app.route("/page1")
 def page1():

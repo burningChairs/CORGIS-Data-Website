@@ -48,10 +48,8 @@ function applyMissionControls() {
     const sort = sortSelect.value;
     let rows = Array.from(tbody.querySelectorAll('tr'));
     
-    // Filter
     rows = rows.filter(r => !astronaut || r.dataset.astronaut === astronaut);
     
-    // Sort
     rows.sort((a,b) => {
         if(sort === 'year_desc') return parseInt(b.dataset.year) - parseInt(a.dataset.year);
         if(sort === 'year_asc') return parseInt(a.dataset.year) - parseInt(b.dataset.year);
@@ -59,7 +57,6 @@ function applyMissionControls() {
         return 0;
     });
     
-    // Clear and append
     tbody.innerHTML = '';
     rows.forEach(r => tbody.appendChild(r));
 }

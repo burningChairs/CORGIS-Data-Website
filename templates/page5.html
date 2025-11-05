@@ -9,7 +9,7 @@
     <aside>
         <h4>Counts</h4>
         <ul class="simple-list">
-            {% for nat, c in nationality_count.items()|dictsort(by='value', reverse=true) %}
+            {% for nat, c in nationality_count|dictsort(by='value', reverse=True) %}
             <li><strong>{{ nat }}</strong> - {{ c }}</li>
             {% endfor %}
         </ul>

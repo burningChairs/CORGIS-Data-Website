@@ -1,9 +1,25 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Military Astronauts</h2>
-<ul>
-	{% for astronaut in military %}
-	<li>{{ astronaut.Profile.Name }} ({{ astronaut.Profile.Nationality }})</li>
-	{% endfor %}
+<h2>Military-affiliated Astronauts</h2>
+<p>These recors indicate the astronaut had a military association in the profile.</p>
+
+<input id="milSearch" placeholder="Search name..." />
+
+<ul id="milList class="simple-list>
+    {% for a in military %}
+    {% set p = a.Profile%}
+    <li><strong>{{ p.Name }}</strong> - {{ p.Nationality }} • Selection: {{ (p.Selection or {}).get('Year', p['Selection.Year']|default('')) }}</li>
+    {% endfor %}
 </ul>
+
+<script>
+const milSearch = document.getElementById('milSearch');
+milSearch.addEventListener('input', () => {
+    const q = milSearch.value.toLowerCase();
+    document.querySelectorAll('#milList li').forEach(li => {
+        const txt = li.textContent.toLowerCase();
+        li.style.display = txt.includes(q) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

@@ -12,17 +12,20 @@ with open(DATA_FILE, "r", encoding="utf-8") as f:
 #helper: missions list and normal keys
 def get_missions(data):
     missions = []
-    for astronauts in data:
+    for astronaut in data:
         profile = astronaut.get("Profile", {})
         name = profile.get("Name", "Unknown")
         for m in astronaut.get("Mission", []) or []:
+            durations = m.get("Durations")
+            if not isinstance(durations, dict):
+                durations = {}
             missions.append({
                 "astronaut": name,
                 "role": m.get("Role", ""),
                 "year": m.get("Year") or m.get("Mission.Year") or 0,
-                "duration": (m.get("Durations", {}) or {}).get("Mission duration", 0.0),
-                "eva": (m.get("Durations", {}) or {}).get("EVA duration", 0.0),
-                "vehicles": (m.get("Vehicles", {}) or {})
+                "duration": durations.get("Mission duration", 0.0),
+                "eva": durations.get("EVA duration", 0.0),
+                "vehicles": m.get("Vehicles", {})
             })
     return missions
 
@@ -30,11 +33,14 @@ def get_lifetime_stats(data):
     stats = []
     for astronaut in data:
         p = astronaut.get("Profile", {})
+        lifetime_starts = p.get("Lifetime Statistics")
+        if not isinstance(lifetime_stats, dict):
+            lifetime_stats = {}
         stats.append({
             "astronaut": p.get("Name", "Unknown"),
-            "missions": (p.get("Lifetime Statistics", {}) or {}).get("Mission count", 0),
-            "duration": (p.get("Lifetime Statistics", {}) or {}).get("Mission duration", 0.0),
-            "eva": (p.get("Lifetime Statistics", {}) or {}).get("EVA duration", 0.0),
+            "missions": lifetime_stats.get("Mission count", 0),
+            "duration": lifetime_stats.get("Mission duration", 0.0),
+            "eva": lifetime_stats.get("EVA duration", 0.0),
         })
     return stats
 

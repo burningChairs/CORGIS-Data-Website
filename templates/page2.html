@@ -11,7 +11,7 @@
             {% endfor %}
         </select>
     </label>
-    
+
     <label>
         <select id="sortBy">
             <option value="year_desc">Year ↓</option>
@@ -23,7 +23,13 @@
 
 <table class="table">
     <thead>
-        <tr><th>Astronaut</th><th>Mission</th><th>Year</th><th>Role</th><th>Duration (days)</th></tr>
+        <tr>
+            <th>Astronaut</th>
+            <th>Mission</th>
+            <th>Year</th>
+            <th>Role</th>
+            <th>Duration (days)</th>
+        </tr>
     </thead>
     <tbody id="missionTbody">
         {% for m in missions %}
@@ -32,7 +38,7 @@
             <td>{{ m.name }}</td>
             <td>{{ m.year }}</td>
             <td>{{ m.role }}</td>
-            <td>{{ m.duration|default(0) }}</td>
+            <td>{{ m.duration }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -44,24 +50,27 @@ const sortSelect = document.getElementById('sortBy');
 const tbody = document.getElementById('missionTbody');
 
 function applyMissionControls() {
-    const astronaut = filterSelect.value;
+    const astronaut = filterSelect.value.trim().toLowerCase();
     const sort = sortSelect.value;
     let rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    rows = rows.filter(r => !astronaut || r.dataset.astronaut === astronaut);
-    
+
+    // Filter, ignoring case and trimming spaces
+    rows = rows.filter(r => !astronaut || r.dataset.astronaut.trim().toLowerCase() === astronaut);
+
     rows.sort((a,b) => {
-        if(sort === 'year_desc') return parseInt(b.dataset.year) - parseInt(a.dataset.year);
-        if(sort === 'year_asc') return parseInt(a.dataset.year) - parseInt(b.dataset.year);
-        if(sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
+        if (sort === 'year_desc') return parseInt(b.dataset.year) - parseInt(a.dataset.year);
+        if (sort === 'year_asc') return parseInt(a.dataset.year) - parseInt(b.dataset.year);
+        if (sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
         return 0;
     });
-    
+
     tbody.innerHTML = '';
     rows.forEach(r => tbody.appendChild(r));
 }
 
 filterSelect.addEventListener('change', applyMissionControls);
 sortSelect.addEventListener('change', applyMissionControls);
+
+applyMissionControls();
 </script>
 {% endblock %}

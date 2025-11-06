@@ -28,17 +28,17 @@
             <p><strong>Lifetime missions:</strong> {{ (p.get('Lifetime Statistics') or {}).get('Mission count', 0) }}</p>
             
             {% if astronaut.Mission %}
-            <details>
-                <summary>Missions ({{ astronaut.Mission|length }})</summary>
-                <ul>
-                    {% for m in astronaut.Mission if m is mapping %}
-                    <li>
-                        <strong>{{ m.Name }}</strong> ({{ m.Year }}) - role: {{ m.Role }} - duration: {{ (m.Durations if m.Durations is mapping else {}).get('Mission duration', m.get('Mission duration', 0)) }} days
-                    </li>
+            	<details>
+                	<summary>Missions ({{ astronaut.Mission|length }})</summary>
+                	<ul>
+                    	{% for m in astronaut.Mission if m is mapping %}
+                    	<li>
+                        	<strong>{{ m.Name }}</strong> ({{ m.Year }}) - role: {{ m.Role }} - duration: {{ (m.Durations if m.Durations is mapping else {}).get('Mission duration', m.get('Mission duration', 0)) }} days
+                    	</li>
                     {% endfor %}
                 </ul>
             </details>
-            {% endif %}
+        	{% endif %}
         </div>
         
         <footer class="card-actions">

@@ -8,6 +8,7 @@
     </div>
     <aside>
         <h4>Counts</h4>
+        <p>List of countries next to their number of Astronauts<p>
         <ul class="simple-list">
             {% for nat, c in nationality_count|dictsort(by='value', reverse=True) %}
             <li><strong>{{ nat }}</strong> - {{ c }}</li>

@@ -4,31 +4,40 @@ import os
 
 app = Flask(__name__)
 
+# Load astronaut JSON data once on startup
 DATA_FILE = os.path.join(os.path.dirname(__file__), "astronauts.json")
-
 with open(DATA_FILE, "r", encoding="utf-8") as f:
     data = json.load(f)
-
+    
+for astronaut in data:
+    mission = astronaut.get("Mission")
+    if isinstance(mission, dict):
+        astronaut["Mission"] = [mission]
+    elif mission is None:
+        astronaut["Mission"] = []
 
 def get_missions(data):
     missions = []
     for astronaut in data:
         profile = astronaut.get("Profile", {})
-        name = profile.get("Name", "Unknown")
+        name = profile.get("Name", "Unknown").strip()
+
         raw_missions = astronaut.get("Mission", [])
         if not isinstance(raw_missions, list):
             raw_missions = []
 
         for m in raw_missions:
             if not isinstance(m, dict):
-                continue  # Skip malformed mission entries
+                continue
+
             durations = m.get("Durations")
             if not isinstance(durations, dict):
                 durations = {}
 
             missions.append({
                 "astronaut": name,
-                "role": m.get("Role", ""),
+                "name": m.get("Name", "").strip(),
+                "role": m.get("Role", "").strip(),
                 "year": m.get("Year") if isinstance(m.get("Year"), int) else 0,
                 "duration": durations.get("Mission duration", 0.0),
                 "eva": durations.get("EVA duration", 0.0),
@@ -45,7 +54,7 @@ def get_lifetime_stats(data):
             lifetime_stats = {}
 
         stats.append({
-            "astronaut": profile.get("Name", "Unknown"),
+            "astronaut": profile.get("Name", "Unknown").strip(),
             "missions": lifetime_stats.get("Mission count", 0),
             "duration": lifetime_stats.get("Mission duration", 0.0),
             "eva": lifetime_stats.get("EVA duration", 0.0),
@@ -55,7 +64,7 @@ def get_lifetime_stats(data):
 def nationality_counts(data):
     counts = {}
     for astronaut in data:
-        nat = (astronaut.get("Profile", {}) or {}).get("Nationality", "Unknown")
+        nat = astronaut.get("Profile", {}).get("Nationality", "Unknown").strip()
         counts[nat] = counts.get(nat, 0) + 1
     return counts
 
@@ -74,16 +83,14 @@ def home():
 
 @app.route("/page1")
 def page1():
-    #Astronaut list with profile data
     return render_template("page1.html", astronauts=data)
 
 @app.route("/page2")
 def page2():
     missions = get_missions(data)
-    #send list of astronauts names for filters
-    names = sorted({(a.get("Profile", {}) or {}).get("Name", "Unknown") for a in data})
-    return render_template("page2.html", missions=missions, astronauts_names=names)
-    
+    astronauts_names = sorted({m["astronaut"] for m in missions if m["astronaut"]})
+    return render_template("page2.html", missions=missions, astronauts_names=astronauts_names)
+
 @app.route("/page3")
 def page3():
     stats = get_lifetime_stats(data)
@@ -91,7 +98,7 @@ def page3():
 
 @app.route("/page4")
 def page4():
-    military = [a for a in data if (a.get("Profile", {}) or {}).get("Military", False)]
+    military = [a for a in data if a.get("Profile", {}).get("Military")]
     return render_template("page4.html", military=military)
 
 @app.route("/page5")

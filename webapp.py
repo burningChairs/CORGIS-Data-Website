@@ -140,10 +140,5 @@ def page4():
         roles=roles
     )
 
-@app.route("/page5")
-def page5():
-    counts = nationality_counts(data)
-    return render_template("page5.html", nationality_count=counts)
-
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=5000)

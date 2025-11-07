@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Lifetime Statistics</h2>
-<p>This chart shows the top astronauts ranked by number of missions and their lifetime mission durations (in days.)</p>
-
+<p>These charts shows the top astronauts ranked by number of missions and their lifetime mission durations (in days.)</p>
+<p>(To view the Mission data by itself on the bar graph, tap on the Lifetime Durations color code! Vice versa for viewing the Lifetime Duration data.)</p>
 <div>
     <label>Show top: 
         <select id="topN">
@@ -69,7 +69,6 @@
     	        }
     	    }
         });
-
 
     if (lineChart) lineChart.destroy();
     lineChart = new Chart(ctxLine, {

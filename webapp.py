@@ -110,8 +110,35 @@ def page3():
 
 @app.route("/page4")
 def page4():
-    military = [a for a in data if a.get("Profile", {}).get("Military")]
-    return render_template("page4.html", military=military)
+    astronauts_unique = {}
+    for astronaut in data:
+        name = astronaut.get("Profile", {}).get("Name", "").strip()
+        if name not in astronauts_unique:
+            astronauts_unique[name] = astronaut
+        else:
+            astronauts_unique[name]["Mission"].extend(astronaut.get("Mission", []))
+    
+    astronauts_list = list(astronauts_unique.values())
+    
+    genders = sorted({a.get("Profile", {}).get("Gender", "Unknown") for a in astronauts_list})
+    nationalities = sorted({a.get("Profile", {}).get("Nationality", "Unknown") for a in astronauts_list})
+    
+    # Collect all roles across missions
+    roles = set()
+    for a in astronauts_list:
+        for m in a.get("Mission", []):
+            role = m.get("Role")
+            if role:
+                roles.add(role)
+    roles = sorted(roles)
+
+    return render_template(
+        "page4.html",
+        astronauts=astronauts_list,
+        genders=genders,
+        nationalities=nationalities,
+        roles=roles
+    )
 
 @app.route("/page5")
 def page5():
@@ -119,4 +146,4 @@ def page5():
     return render_template("page5.html", nationality_count=counts)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="127.0.0.1", port=5000)

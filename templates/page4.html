@@ -1,25 +1,89 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Military-affiliated Astronauts</h2>
-<p>These recors indicate the astronaut had a military association in the profile.</p>
+<h2>Astronaut Specifics</h2>
+<p>Filter Astronauts by gender, nationality, military affiliation, or role.</p>
 
-<input id="milSearch" placeholder="Search name..." />
+<div class="controls">
+    <label>Gender:
+        <select id="genderFilter">
+            <option value="">All</option>
+            {% for g in genders %}
+            <option value="{{ g }}">{{ g }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Nationality:
+        <select id="natFilter">
+            <option value="">All</option>
+            {% for n in nationalities %}
+            <option value="{{ n }}">{{ n }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>Military:
+        <select id="milFilter">
+            <option value="">All</option>
+            <option value="Yes">Yes</option>
+        </select>
+    </label>
+    <label>Role:
+        <select id="roleFilter">
+            <option value="">All</option>
+            {% for r in roles %}
+            <option value="{{ r }}">{{ r }}</option>
+            {% endfor %}
+        </select>
+    </label>
+</div>
 
-<ul id="milList class="simple-list>
-    {% for a in military %}
-    {% set p = a.Profile %}
-    <li><strong>{{ p.Name }}</strong> - {{ p.Nationality }} • Selection: {{ (p.Selection or {}).get('Year', p['Selection.Year']|default('')) }}</li>
+<div id="explorerCards" class="cards-grid">
+    {% for astronaut in astronauts %}
+    {% set p = astronaut.Profile %}
+    {% set roles_list = astronaut.Mission | map(attribute='Role') | list %}
+    <article class="astronaut-card"
+    data-gender="{{ p.Gender|default('') }}"
+    data-nat="{{ p.Nationality|default('') }}"
+    data-mil="{{ 'Yes' if p.Military else 'No' }}"
+    data-role="{{ roles_list | join(',') }}">
+        <header class="card-head">
+            <h3>{{ p.Name }}</h3>
+            <div class="meta">{{ p.Nationality }} • Born: {{ p['Birth Year'] }}</div>
+        </header>
+    </article>
     {% endfor %}
-</ul>
+</div>
 
 <script>
-const milSearch = document.getElementById('milSearch');
-milSearch.addEventListener('input', () => {
-    const q = milSearch.value.toLowerCase();
-    document.querySelectorAll('#milList li').forEach(li => {
-        const txt = li.textContent.toLowerCase();
-        li.style.display = txt.includes(q) ? '' : 'none';
+const genderFilter = document.getElementById('genderFilter');
+const natFilter = document.getElementById('natFilter');
+const milFilter = document.getElementById('milFilter');
+const roleFilter = document.getElementById('roleFilter');
+const cards = Array.from(document.querySelectorAll('.astronaut-card'));
+
+//filter function
+function applyExplorerFilters() {
+    const gender = genderFilter.value;
+    const nat = natFilter.value;
+    const mil = milFilter.value;
+    const role = roleFilter.value;
+    
+    cards.forEach(card => {
+        const matchGender = !gender || card.dataset.gender === gender;
+        const matchNat = !nat || card.dataset.nat === nat;
+        const matchMil = !mil || card.dataset.mil === mil;
+        const matchRole = !role || card.dataset.role.split(',').includes(role);
+        
+        card.style.display = (matchGender && matchNat &&matchMil && matchRole) ? '' : 'none';
     });
-});
+}
+
+//event listeners
+genderFilter.addEventListener('change', applyExplorerFilters);
+natFilter.addEventListener('change', applyExplorerFilters);
+milFilter.addEventListener('change', applyExplorerFilters);
+roleFilter.addEventListener('change', applyExplorerFilters);
+
+//first filter
+applyExplorerFilters();
 </script>
 {% endblock %}

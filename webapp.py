@@ -97,9 +97,20 @@ def page1():
     astronauts_unique = list(astronaut_dict.values())
     return render_template("page1.html", astronauts=data)
 
+
+def deduplicate_missions(missions):
+    seen = set()
+    unique_missions = []
+    for m in missions:
+        key = (m['astronaut'], m['name'], m['year'], m['role'], m['duration'])
+        if key not in seen:
+            seen.add(key)
+            unique_missions.append(m)
+    return unique_missions
 @app.route("/page2")
 def page2():
     missions = get_missions(data)
+    missions = deduplicate_missions(missions) # no duplications of astronauts
     astronauts_names = sorted({m["astronaut"] for m in missions if m["astronaut"]})
     return render_template("page2.html", missions=missions, astronauts_names=astronauts_names)
 

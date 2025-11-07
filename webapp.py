@@ -83,6 +83,18 @@ def home():
 
 @app.route("/page1")
 def page1():
+    #make sure all cards appear once
+    astronaut_dict = {}
+    for astronaut in data:
+        name = astronaut.get("Profile", {}).get("Name", "").strip()
+        if name not in astronaut_dict:
+            astronaut_dict[name] = astronaut
+        else:
+            #combine all missions
+            existing = astronaut_dict[name]
+            existing["Mission"].extend(astronaut.get("Mission", []))
+            
+    astronauts_unique = list(astronaut_dict.values())
     return render_template("page1.html", astronauts=data)
 
 @app.route("/page2")

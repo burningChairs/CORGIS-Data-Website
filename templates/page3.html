@@ -1,47 +1,78 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Lifetime Statistics</h2>
+<p>This chart shows the top astronauts ranked by number of missions and their lifetime mission durations (in days.)</p>
 
 <div>
     <label>Show top: 
         <select id="topN">
-            <option>10</option>
-            <option>15</option>
-            <option>20</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
         </select>
     </label>
 </div>
 
-<canvas id="statsChart"></canvas>
+<div style="margin:10px 0;">
+    &nbsp;&nbsp;
+    <span style="display:inline-block;width:20px;background:#6b2f51;margin-right:5px"></span><span style="color;#6b2f51;">Missions</span>
+    &nbsp;&nbsp;
+    <span style="display:inline-block;width:20px;height:20px;background:#000000;margin-right:5px;"></span><span style="color:#000000;">Lifetime Duration (days)</span>
+</div>
+
+<canvas id="statsChart" width="600" height="400"></canvas>
+
+<!--Chart library-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-const raw = {{ stats | tojson }};
-function renderChart(n=10) {
-    // sort by missions desc and slice top n
-    const sorted = raw.slice().sort((a,b) => b.missions - a.missions).slice(0,n);
-    const labels = sorted.map(s => s.astronaut);
-    const missions = sorted.map(s => s.missions);
-    const durations = sorted.map(s => s.duration);
-        
-    const ctx = document.getElementById('statsChart').getContext('2d');
-    if (window.statsChart) window.statsChart.destroy();
-    window.statsChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { label: 'Missions', data: missions, backgroundColor: '#64003f' },
-                { label: 'Lifetime duration (days)', data: durations, backgroundColor: '#6b2f51' }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: { y: { beginAtZero: true } }
-        }
+	const raw = {{ stats | tojson }};
+	const ctx = document.getElementById('statsChart').getContext('2d');
+	let statsChart = null;
+	
+	function renderChart(n=10) {
+    	// sort by missions desc and slice top n
+    	const sorted = raw.slice().sort((a,b) => b.missions - a.missions).slice(0,n);
+    	const labels = sorted.map(s => s.astronaut);
+    	const missions = sorted.map(s => s.missions);
+    	const durations = sorted.map(s => s.duration);
+    	    
+    	if (statsChart) {
+    	    statsChart.destroy();
+    	}
+    	
+    	statsChart = new Chart(ctx, {
+    	    type: 'bar',
+    	    data: {
+    		    labels: labels,
+    		    datasets: [
+    		        {
+                        label: 'Missions',
+                        data: missions,
+                        backgroundColor: '#64003f'
+                    },
+                    {
+                        label: 'Lifetime duration (days)',
+                        data: durations,
+                        backgroundColor: '#6b2f51'
+                    }
+    		    ]
+    		},
+    		options: {
+    		    responsive: true,
+    		    scales: {
+    		        y: {
+    		            beginAtZero: true
+    		        }
+    		    }
+    		}
+    	});
+    }
+    	
+	document.getElementById('topN').addEventListener('change', (e) => {renderChart(parseInt(e.target.value));
     });
-}
-document.getElementById('topN').addEventListener('change', () => {
-    renderChart(parseInt(document.getElementById('topN').value));
-});
-renderChart(10);
+    
+    // original chart render
+    renderChart(10);
+</script>
 {% endblock %}

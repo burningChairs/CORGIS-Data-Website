@@ -31,9 +31,12 @@
             	<details>
                 	<summary>Missions ({{ astronaut.Mission|length }})</summary>
                 	<ul>
-                    	{% for m in astronaut.Mission if m is mapping %}
+                    	{% for m in astronaut.Mission %}
                     	<li>
-                        	<strong>{{ m.Name }}</strong> ({{ m.Year }}) - role: {{ m.Role }} - duration: {{ (m.Durations if m.Durations is mapping else {}).get('Mission duration', m.get('Mission duration', 0)) }} days
+                        	<strong>{{ m.Name }}</strong>
+                        	{% if m.Year %} ({{ m.Year }}){% endif %}
+                        	{% if m.Role %}- role: {{ m.Role }}{% endif %}
+                        	{% if m.Duration %}- duration: {{ m.Duration.get('Mission duration', 0) }} days{% endif %}
                     	</li>
                     {% endfor %}
                 </ul>

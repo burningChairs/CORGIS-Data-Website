@@ -13,22 +13,18 @@
     </label>
 </div>
 
-<div style="margin:10px 0;">
-    &nbsp;&nbsp;
-    <span style="display:inline-block;width:20px;background:#6b2f51;margin-right:5px"></span><span style="color;#6b2f51;">Missions</span>
-    &nbsp;&nbsp;
-    <span style="display:inline-block;width:20px;height:20px;background:#000000;margin-right:5px;"></span><span style="color:#000000;">Lifetime Duration (days)</span>
-</div>
-
 <canvas id="statsChart" width="600" height="400"></canvas>
+<canvas id="lineChart" width="600" height="200" style="margin-top:20px;"></canvas>
 
 <!--Chart library-->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 	const raw = {{ stats | tojson }};
-	const ctx = document.getElementById('statsChart').getContext('2d');
+	const ctxBar = document.getElementById('statsChart').getContext('2d');
+	const ctxLine = document.getElementById('lineChart').getContext('2d');
 	let statsChart = null;
+	let lineChart = null;
 	
 	function renderChart(n=10) {
     	// sort by missions desc and slice top n
@@ -37,37 +33,77 @@
     	const missions = sorted.map(s => s.missions);
     	const durations = sorted.map(s => s.duration);
     	    
-    	if (statsChart) {
-    	    statsChart.destroy();
-    	}
-    	
-    	statsChart = new Chart(ctx, {
+    	if (statsChart) statsChart.destroy();
+    	statsChart = new Chart(ctxBar, {
     	    type: 'bar',
     	    data: {
-    		    labels: labels,
-    		    datasets: [
-    		        {
-                        label: 'Missions',
-                        data: missions,
-                        backgroundColor: '#64003f'
-                    },
-                    {
-                        label: 'Lifetime duration (days)',
-                        data: durations,
-                        backgroundColor: '#6b2f51'
-                    }
-    		    ]
-    		},
-    		options: {
-    		    responsive: true,
-    		    scales: {
-    		        y: {
-    		            beginAtZero: true
-    		        }
-    		    }
-    		}
-    	});
-    }
+    	        labels,
+    	        datasets: [
+    	            {
+    	                label: 'Missions',
+    	                data: missions,
+    	                backgroundColor: '#000000'
+    	            },
+    	            {
+    	                label: 'Lifetime duration (days)',
+    	                data: durations,
+    	                backgroundColor: '#6b2f51'
+    	            }
+    	        ]
+    	    },
+    	    options: {
+    	        responsive: true,
+    	        plugins: {
+    	            tooltip: {
+    	                callbacks: {
+    	                    label: function(context) {
+    	                        if(context.dataset.label === "Missions") return `Missions: ${context.raw}`;
+    	                        if(context.dataset.label === "Lifetime duration (days)") return 'Duration: ${context.raw} days';
+    	                    }
+    	                }
+    	            }
+    	    
+    	        },
+    	        scales: {
+    	            y: { beginAtZero: true }
+    	        }
+    	    }
+        });
+
+
+    if (lineChart) lineChart.destroy();
+    lineChart = new Chart(ctxLine, {
+    	    type: 'line',
+    	    data: {
+    	        labels,
+    	        datasets: [{
+    	            label: 'Lifetime Duration (days)',
+    	            data: durations,
+    	            fill: true,
+    	            borderColor: '#6b2f51',
+    	            backgroundColor: 'rgba(107,47,81,0.2)',
+    	            tension: 0.3
+    	    }]
+    	},
+    	options: {
+    	    responsive: true,
+    	    plugins: {
+    	        legend: { display: false },
+    	        tooltip: {
+    	            callbackas: {
+    	                label: function(context) {
+    	                    return 'Duration: ${context.raw} days';
+    	                }
+    	            }
+    	        }
+    	        
+    	    },
+    	    scales: {
+    	        y: { beginAtZero: true }
+    	    }
+    	}
+    });
+}
     	
 	document.getElementById('topN').addEventListener('change', (e) => {renderChart(parseInt(e.target.value));
     });

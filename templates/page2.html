@@ -49,23 +49,25 @@ const filterSelect = document.getElementById('astronautFilter');
 const sortSelect = document.getElementById('sortBy');
 const tbody = document.getElementById('missionTbody');
 
+// store rows
+const allRows = Array.from(tbody.querySelectorAll('tr'));
+
 function applyMissionControls() {
     const astronaut = filterSelect.value.trim().toLowerCase();
     const sort = sortSelect.value;
-    let rows = Array.from(tbody.querySelectorAll('tr'));
-
-    // Filter, ignoring case and trimming spaces
-    rows = rows.filter(r => !astronaut || r.dataset.astronaut.trim().toLowerCase() === astronaut);
-
-    rows.sort((a,b) => {
+    
+    let filteredRows = allRows.filter(r => !astronaut || r.dataset.astronaut.trim().toLowerCase() === astronaut);
+    
+    filteredRows.sort((a,b) => {
         if (sort === 'year_desc') return parseInt(b.dataset.year) - parseInt(a.dataset.year);
         if (sort === 'year_asc') return parseInt(a.dataset.year) - parseInt(b.dataset.year);
         if (sort === 'name_asc') return a.dataset.name.localeCompare(b.dataset.name);
         return 0;
     });
 
+    // clear table and remake it depending on selected
     tbody.innerHTML = '';
-    rows.forEach(r => tbody.appendChild(r));
+    filteredRows.forEach(r => tbody.appendChild(r));
 }
 
 filterSelect.addEventListener('change', applyMissionControls);

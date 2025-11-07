@@ -81,3 +81,6 @@ button.toggle:hover{opacity:0.95}
     .cards{flex-direction:column}
 }
 
+a:link, a:visited {background-color:  #5d0341;color: white;padding: 6px 15px;text-align: center;text-decoration: none;display: inline-block;}
+a:hover, a:active {background-color: #b9a890;}
+img{width: 300px;height: 200px;}
